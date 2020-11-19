@@ -6,6 +6,27 @@ const userSchema = mongoose.Schema({
   phone: { type: String, required: true },
   email: { type: String, lowercase: true, required: true, unique: true },
   password: { type: String, required: true },
+  friends: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: false,
+    },
+  ],
+  requests: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: false,
+    },
+  ],
+  sentRequests: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: false,
+    },
+  ],
 });
 
 userSchema.plugin(uniqueValidator);
