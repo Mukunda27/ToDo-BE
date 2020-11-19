@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 
 const Task = require("../model/task");
+const User = require("../model/user");
 
 router.post("/create", (req, res, next) => {
   if (
@@ -48,12 +49,19 @@ router.get("/all", (req, res, next) => {
   const pageSize = +req.query.pagesize;
   const currentPage = +req.query.page;
   let totalTasks;
-  const taskQuery = Task.find({ creator: req.user._id }).sort({
-    finishByDate: 1,
-  });
+  let taskQuery;
 
-  taskQuery
-    .exec()
+  User.findOne({ _id: req.user._id })
+    .then((user) => {
+      taskQuery = Task.find({
+        $or: [{ creator: req.user._id }, { creator: { $in: user.friends } }],
+      })
+        .sort({
+          finishByDate: 1,
+        })
+        .populate({ path: "creator", select: "name" });
+      return taskQuery.exec();
+    })
     .then((result) => {
       totalTasks = result.length;
       if (!pageSize || !currentPage) {
@@ -62,7 +70,6 @@ router.get("/all", (req, res, next) => {
           totalTasks: totalTasks,
         });
       }
-
       return taskQuery.skip(pageSize * (currentPage - 1)).limit(pageSize);
     })
     .then((result) => {
@@ -72,6 +79,7 @@ router.get("/all", (req, res, next) => {
       });
     })
     .catch((error) => {
+      console.log(error);
       res.status(500).json({
         error: error,
       });
@@ -87,13 +95,16 @@ router.get("/day", (req, res, next) => {
   const pageSize = +req.query.pagesize;
   const currentPage = +req.query.page;
   let totalTasks;
+  let taskQuery;
 
-  const taskQuery = Task.find({
-    creator: req.user._id,
-    finishByDate: new Date(req.query.date).toLocaleDateString(),
-  });
-
-  taskQuery
+  User.findOne({ _id: req.user._id })
+    .then((user) => {
+      taskQuery = Task.find({
+        $or: [{ creator: req.user._id }, { creator: { $in: user.friends } }],
+        finishByDate: new Date(req.query.date).toLocaleDateString(),
+      }).populate({ path: "creator", select: "name" });
+      return taskQuery.exec();
+    })
     .then((result) => {
       totalTasks = result.length;
       if (!pageSize || !currentPage) {
@@ -121,13 +132,20 @@ router.get("/important", (req, res, next) => {
   const pageSize = +req.query.pagesize;
   const currentPage = +req.query.page;
   let totalTasks;
+  let taskQuery;
 
-  const taskQuery = Task.find({ creator: req.user._id, important: true }).sort({
-    finishByDate: 1,
-  });
-
-  taskQuery
-    .exec()
+  User.findOne({ _id: req.user._id })
+    .then((user) => {
+      taskQuery = Task.find({
+        $or: [{ creator: req.user._id }, { creator: { $in: user.friends } }],
+        important: true,
+      })
+        .sort({
+          finishByDate: 1,
+        })
+        .populate({ path: "creator", select: "name" });
+      return taskQuery.exec();
+    })
     .then((result) => {
       totalTasks = result.length;
       if (!pageSize || !currentPage) {
@@ -136,7 +154,6 @@ router.get("/important", (req, res, next) => {
           totalTasks: totalTasks,
         });
       }
-
       return taskQuery.skip(pageSize * (currentPage - 1)).limit(pageSize);
     })
     .then((result) => {
@@ -162,15 +179,20 @@ router.get("/list", (req, res, next) => {
   const pageSize = +req.query.pagesize;
   const currentPage = +req.query.page;
   let totalTasks;
+  let taskQuery;
 
-  const taskQuery = Task.find({
-    creator: req.user._id,
-    list: req.query.list,
-  }).sort({
-    finishByDate: 1,
-  });
-  taskQuery
-    .exec()
+  User.findOne({ _id: req.user._id })
+    .then((user) => {
+      taskQuery = Task.find({
+        $or: [{ creator: req.user._id }, { creator: { $in: user.friends } }],
+        list: req.query.list,
+      })
+        .sort({
+          finishByDate: 1,
+        })
+        .populate({ path: "creator", select: "name" });
+      return taskQuery.exec();
+    })
     .then((result) => {
       totalTasks = result.length;
       if (!pageSize || !currentPage) {
@@ -179,7 +201,6 @@ router.get("/list", (req, res, next) => {
           totalTasks: totalTasks,
         });
       }
-
       return taskQuery.skip(pageSize * (currentPage - 1)).limit(pageSize);
     })
     .then((result) => {
@@ -201,10 +222,17 @@ router.put("/:id", (req, res, next) => {
       message: "Some parameters are missing in the request ",
     });
   }
-  Task.findOneAndUpdate(
-    { _id: req.params.id, creator: req.user._id },
-    { $set: { completed: req.body.completed } }
-  )
+
+  User.findOne({ _id: req.user._id })
+    .then((user) => {
+      return Task.findOneAndUpdate(
+        {
+          _id: req.params.id,
+          $or: [{ creator: req.user._id }, { creator: { $in: user.friends } }],
+        },
+        { $set: { completed: req.body.completed } }
+      );
+    })
     .then((result) => {
       res.status(200).json({ message: "Task status change successful!" });
     })
@@ -216,7 +244,13 @@ router.put("/:id", (req, res, next) => {
 });
 
 router.delete("/:id", (req, res, next) => {
-  Task.deleteOne({ _id: req.params.id, creator: req.user._id })
+  User.findOne({ _id: req.user._id })
+    .then((user) => {
+      return Task.deleteOne({
+        _id: req.params.id,
+        $or: [{ creator: req.user._id }, { creator: { $in: user.friends } }],
+      });
+    })
     .then((result) => {
       if (result.n > 0) {
         res.status(200).json({ message: "Deletion successful!" });
