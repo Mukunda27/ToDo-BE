@@ -6,7 +6,7 @@ const List = require("../model/list");
 router.post("/add", (req, res, next) => {
   if (!req.body.listName) {
     return res
-      .status(500)
+      .status(400)
       .json({ message: "List Name is missing in the request body" });
   }
 

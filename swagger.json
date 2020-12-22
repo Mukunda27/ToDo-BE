@@ -1,0 +1,1142 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "1.0.0",
+    "title": "To Do List",
+    "description": "To Do LIst REST API",
+    "contact": {
+      "email": "rmukunda.27@gmail.com"
+    },
+    "license": {
+      "name": "MIT",
+      "url": "https://opensource.org/licenses/MIT"
+    }
+  },
+  "host": "http://todobe-env.eba-bcfh3zx8.us-east-2.elasticbeanstalk.com",
+  "basePath": "/",
+  "tags": [
+    {
+      "name": "Users",
+      "description": "API for users in the system"
+    },
+    {
+      "name": "Lists",
+      "description": "API for lists created by users"
+    },
+    {
+      "name": "Tasks",
+      "description": "API for tasks created by users"
+    }
+  ],
+
+  "schemes": ["http"],
+  "consumes": ["application/json"],
+  "produces": ["application/json"],
+
+  "paths": {
+    "/api/user/create": {
+      "post": {
+        "tags": ["Users"],
+        "summary": "Create new user",
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "name",
+            "description": "User Name",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "MAson MOunt"
+            }
+          },
+          {
+            "in": "body",
+            "name": "phone",
+            "description": "Phone Number of the user",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "9998877799"
+            }
+          },
+          {
+            "in": "body",
+            "name": "email",
+            "description": "Email address of the user",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "mount@gmail.com"
+            }
+          },
+          {
+            "in": "body",
+            "name": "password",
+            "description": "Password chosen by the user",
+            "required": true,
+            "schema": { "type": "string", "example": "asd!~@122" }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Successful Operation",
+
+            "schema": {
+              "title": "Sample Response",
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string",
+                  "example": "User created successfully !"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "title": "Sample error response",
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "object",
+                  "properties": {}
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/user/login": {
+      "post": {
+        "tags": ["Users"],
+        "summary": "Login user to the system",
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "email",
+            "description": "Email address of the account",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "mount@gmail.com"
+            }
+          },
+          {
+            "in": "body",
+            "name": "password",
+            "description": "Password of the account",
+            "required": true,
+            "schema": { "type": "string", "example": "asd!~@122" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Operation",
+
+            "schema": {
+              "title": "Sample Response",
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "example": "Mason Mount"
+                },
+                "userID": {
+                  "type": "string",
+                  "example": "5fb694c0d884419aa8c5d33a"
+                },
+                "email": {
+                  "type": "string",
+                  "example": "mount@gmail.com"
+                },
+                "token": {
+                  "type": "string",
+                  "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOiI1ZmI2OTRjMGQ4ODQ0MTlhYThs"
+                },
+                "expiresIn": {
+                  "type": "number",
+                  "example": 3000
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "title": "Sample error response",
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string",
+                  "example": "Incorrect Email or Password"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "title": "Sample error response",
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "object",
+                  "properties": {}
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/user/all": {
+      "get": {
+        "tags": ["Users"],
+        "summary": "Get all users to the system",
+        "produces": ["application/json"],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successful Operation",
+
+            "schema": {
+              "title": "Sample Response",
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "example": "Mason Mount"
+                  },
+                  "_id": {
+                    "type": "string",
+                    "example": "5fb694c0d884419aa8c5d33a"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "title": "Sample error response",
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "object",
+                  "properties": {}
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/user/password-reset-request": {
+      "post": {
+        "tags": ["Users"],
+        "summary": "Initiate password reset request",
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "email",
+            "description": "Email of the user for sending password reset link",
+            "required": true,
+            "schema": { "type": "string", "example": "mount@gmail.com" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Operation",
+
+            "schema": {
+              "title": "Sample Response",
+              "type": "object",
+
+              "properties": {
+                "message": {
+                  "type": "string",
+                  "example": "Password reset mail sent"
+                },
+                "resetEmail": {
+                  "type": "string",
+                  "example": "mount@gmail.com"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid Request Body",
+            "schema": {
+              "title": "Sample error response",
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string",
+                  "example": "Email is required"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "title": "Sample error response",
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string",
+                  "example": "User with this email does not exist"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "title": "Sample error response",
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "object",
+                  "properties": {}
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/user/valid-password-reset-token": {
+      "post": {
+        "tags": ["Users"],
+        "summary": "Validates the password reset token",
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "token",
+            "description": "Passwordreset token sent with the password reset link",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOiI1ZmI2OTRjMGQ4ODQ0M"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Operation",
+
+            "schema": {
+              "title": "Sample Response",
+              "type": "object",
+
+              "properties": {
+                "validToken": {
+                  "type": "boolean",
+                  "example": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid Request Body",
+            "schema": {
+              "title": "Sample error response",
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string",
+                  "example": "Token is required"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "title": "Sample error response",
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "object",
+                  "properties": {}
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/user/reset-password": {
+      "post": {
+        "tags": ["Users"],
+        "summary": "Resets password for the user",
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "resettoken",
+            "description": "Reset token sent with the password reset link",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOiI1ZmI2OTRjMGQ4ODQ0MTlhYThs"
+            }
+          },
+          {
+            "in": "body",
+            "name": "newPassword",
+            "description": "New Password",
+            "required": true,
+            "schema": { "type": "string", "example": "asd!~@122" }
+          },
+          {
+            "in": "body",
+            "name": "confirmedPassword",
+            "description": "Confirmed Password",
+            "required": true,
+            "schema": { "type": "string", "example": "asd!~@122" }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Successful Operation",
+
+            "schema": {
+              "title": "Sample Response",
+              "type": "object",
+              "properties": {
+                "resetSuccess": {
+                  "type": "boolean",
+                  "example": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid Request Body",
+            "schema": {
+              "title": "Sample error response",
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string",
+                  "example": "Some parameters are missing in the request body"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "title": "Sample error response",
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string",
+                  "example": "Account with this email does not exist"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "title": "Sample error response",
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "object",
+                  "properties": {}
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/list/add": {
+      "post": {
+        "tags": ["Lists"],
+        "summary": "Add a list for a user",
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "listName",
+            "description": "Name of the list created by the user",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "Personal"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Successful Operation",
+
+            "schema": {
+              "title": "Sample Response",
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string",
+                  "example": "List Added!!"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid Request Body",
+            "schema": {
+              "title": "Sample error response",
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string",
+                  "example": "List Name is missing in the request body"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "title": "Sample error response",
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "object",
+                  "properties": {}
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/list/all": {
+      "get": {
+        "tags": ["Lists"],
+        "summary": "Get all lists for a user",
+        "produces": ["application/json"],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successful Operation",
+
+            "schema": {
+              "title": "Sample Response",
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "listName": {
+                    "type": "string",
+                    "example": "Personal"
+                  },
+                  "_id": {
+                    "type": "string",
+                    "example": "5fb694c0d884419aa8c5d33a"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "title": "Sample error response",
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "object",
+                  "properties": {}
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/task/create": {
+      "post": {
+        "tags": ["Tasks"],
+        "summary": "Create new task",
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "title",
+            "description": "Task Title",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "Submit Project"
+            }
+          },
+          {
+            "in": "body",
+            "name": "finishByDate",
+            "description": "Task Finish Date",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "12/15/2020"
+            }
+          },
+          {
+            "in": "body",
+            "name": "finishByTime",
+            "description": "Task Finish Timer",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "06:00 PM"
+            }
+          },
+          {
+            "in": "body",
+            "name": "important",
+            "description": "Indicates if the task is important",
+            "required": true,
+            "schema": { "type": "boolean", "example": "false" }
+          },
+          {
+            "in": "body",
+            "name": "list",
+            "description": "List to which the task belongs",
+            "required": false,
+            "schema": { "type": "string", "example": "Fitness" }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Successful Operation",
+
+            "schema": {
+              "title": "Sample Response",
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string",
+                  "example": "Task Created!!"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid Request Body",
+            "schema": {
+              "title": "Sample error response",
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string",
+                  "example": "Some parameters are missing in the request body"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "title": "Sample error response",
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "object",
+                  "properties": {}
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/task/all": {
+      "get": {
+        "tags": ["Tasks"],
+        "summary": "Get all tasks for a user",
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "pageSize",
+            "description": "Number of tasks per page",
+            "required": false,
+            "schema": {
+              "type": "number",
+              "example": 15
+            }
+          },
+          {
+            "in": "query",
+            "name": "currentPage",
+            "description": "Current page index",
+            "required": false,
+            "schema": {
+              "type": "number",
+              "example": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Operation",
+
+            "schema": {
+              "title": "Sample Response",
+              "type": "object",
+              "properties": {
+                "tasks": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                },
+                "totalTasks": {
+                  "type": "number",
+                  "example": 5
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "title": "Sample error response",
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "object",
+                  "properties": {}
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/task/day": {
+      "get": {
+        "tags": ["Tasks"],
+        "summary": "Get all tasks for a user for a given date",
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "date",
+            "description": "Date for which the tasks will have to be retrieved",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "12/15/2020"
+            }
+          },
+          {
+            "in": "query",
+            "name": "pageSize",
+            "description": "Number of tasks per page",
+            "required": false,
+            "schema": {
+              "type": "number",
+              "example": 15
+            }
+          },
+          {
+            "in": "query",
+            "name": "currentPage",
+            "description": "Current page index",
+            "required": false,
+            "schema": {
+              "type": "number",
+              "example": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Operation",
+
+            "schema": {
+              "title": "Sample Response",
+              "type": "object",
+              "properties": {
+                "tasks": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                },
+                "totalTasks": {
+                  "type": "number",
+                  "example": 5
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid Request Body",
+            "schema": {
+              "title": "Sample error response",
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string",
+                  "example": "Some query parameters are missing in the request"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "title": "Sample error response",
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "object",
+                  "properties": {}
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/task/important": {
+      "get": {
+        "tags": ["Tasks"],
+        "summary": "Get all important tasks for a user",
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "pageSize",
+            "description": "Number of tasks per page",
+            "required": false,
+            "schema": {
+              "type": "number",
+              "example": 15
+            }
+          },
+          {
+            "in": "query",
+            "name": "currentPage",
+            "description": "Current page index",
+            "required": false,
+            "schema": {
+              "type": "number",
+              "example": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Operation",
+
+            "schema": {
+              "title": "Sample Response",
+              "type": "object",
+              "properties": {
+                "tasks": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                },
+                "totalTasks": {
+                  "type": "number",
+                  "example": 5
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "title": "Sample error response",
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "object",
+                  "properties": {}
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/task/list": {
+      "get": {
+        "tags": ["Tasks"],
+        "summary": "Get all tasks for a user",
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "list",
+            "description": "Date for which the tasks will have to be retrieved",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "fitness"
+            }
+          },
+          {
+            "in": "query",
+            "name": "pageSize",
+            "description": "Number of tasks per page",
+            "required": false,
+            "schema": {
+              "type": "number",
+              "example": 15
+            }
+          },
+          {
+            "in": "query",
+            "name": "currentPage",
+            "description": "Current page index",
+            "required": false,
+            "schema": {
+              "type": "number",
+              "example": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Operation",
+
+            "schema": {
+              "title": "Sample Response",
+              "type": "object",
+              "properties": {
+                "tasks": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                },
+                "totalTasks": {
+                  "type": "number",
+                  "example": 5
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid Request Body",
+            "schema": {
+              "title": "Sample error response",
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string",
+                  "example": "Some query parameters are missing in the request"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "title": "Sample error response",
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "object",
+                  "properties": {}
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/task/:id": {
+      "put": {
+        "tags": ["Tasks"],
+        "summary": "Update the completion status of a task",
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "completed",
+            "description": "Task completion status",
+            "required": true,
+            "schema": {
+              "type": "boolean",
+              "example": "true"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Operation",
+
+            "schema": {
+              "title": "Sample Response",
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string",
+                  "example": "Task status change successful!"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid Request Body",
+            "schema": {
+              "title": "Sample error response",
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string",
+                  "example": "Some parameters are missing in the request"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "title": "Sample error response",
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "object",
+                  "properties": {}
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/task/:taskid": {
+      "delete": {
+        "tags": ["Tasks"],
+        "summary": "Delete task of a user",
+        "produces": ["application/json"],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successful Operation",
+
+            "schema": {
+              "title": "Sample Response",
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string",
+                  "example": "Deletion successful!"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "title": "Sample error response",
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "object",
+                  "properties": {}
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "User": {
+      "title": "User",
+      "type": "object",
+      "required": ["name", "phone", "email", "password"],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "phone": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string",
+          "uniqueItems": true
+        },
+        "password": {
+          "type": "string"
+        }
+      }
+    },
+    "List": {
+      "title": "List",
+      "type": "object",
+      "required": ["name", "creator"],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "creator": {
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    },
+    "Task": {
+      "title": "Task",
+      "type": "object",
+      "required": [
+        "title",
+        "finishByDate",
+        "finishByTime",
+        "important",
+        "completed",
+        "creator"
+      ],
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "finishByDate": {
+          "type": "string"
+        },
+        "finishByTime": {
+          "type": "string"
+        },
+        "list": {
+          "type": "string"
+        },
+        "important": {
+          "type": "boolean"
+        },
+        "completed": {
+          "type": "boolean"
+        },
+        "creator": {
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    }
+  },
+  "components": {
+    "parameters": {}
+  }
+}

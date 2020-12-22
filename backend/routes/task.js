@@ -5,6 +5,7 @@ const Task = require("../model/task");
 const User = require("../model/user");
 
 router.post("/create", (req, res, next) => {
+  console.log(req.body);
   if (
     !req.body.title ||
     !req.body.finishByDate ||
@@ -12,7 +13,7 @@ router.post("/create", (req, res, next) => {
     !req.body.finishByTime
   ) {
     return res
-      .status(500)
+      .status(400)
       .json({ message: "Some parameters are missing in the request body" });
   }
 
@@ -88,7 +89,7 @@ router.get("/all", (req, res, next) => {
 
 router.get("/day", (req, res, next) => {
   if (!req.query.date) {
-    return res.status(500).json({
+    return res.status(400).json({
       message: "Some query parameters are missing in the request ",
     });
   }
@@ -171,7 +172,7 @@ router.get("/important", (req, res, next) => {
 
 router.get("/list", (req, res, next) => {
   if (!req.query.list) {
-    return res.status(500).json({
+    return res.status(400).json({
       message: "Some query parameters are missing in the request ",
     });
   }
@@ -218,7 +219,7 @@ router.get("/list", (req, res, next) => {
 
 router.put("/:id", (req, res, next) => {
   if (req.body.completed == null) {
-    return res.status(500).json({
+    return res.status(400).json({
       message: "Some parameters are missing in the request ",
     });
   }

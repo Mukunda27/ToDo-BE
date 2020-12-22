@@ -66,7 +66,7 @@ router.post("/login", (req, res, next) => {
       });
     })
     .catch((err) => {
-      res.status(401).json({
+      res.status(500).json({
         message: "Something went wrong. Please try again",
         error: err,
       });
@@ -76,14 +76,12 @@ router.post("/login", (req, res, next) => {
 router.get("/all", (req, res, next) => {
   getAllUsers()
     .then((users) => {
-      console.log(users);
       res.status(200).json({
         users: users,
       });
     })
     .catch((err) => {
-      res.status(401).json({
-        message: "Could not get users",
+      res.status(500).json({
         error: err,
       });
     });
@@ -91,11 +89,13 @@ router.get("/all", (req, res, next) => {
 
 router.post("/password-reset-request", (req, res, next) => {
   if (!req.body.email) {
-    return res.status(500).json({ message: "Email is required" });
+    return res.status(400).json({ message: "Email is required" });
   }
   const user = User.findOne({ email: req.body.email }).then((user) => {
     if (!user) {
-      return res.status(409).json({ message: "Email does not exist" });
+      return res
+        .status(404)
+        .json({ message: "User with this email does not exist" });
     }
 
     const token = tokenUtilities.generateAccessToken(user._id, user.name);
@@ -123,14 +123,14 @@ router.post("/password-reset-request", (req, res, next) => {
           text:
             "You are receiving this because you (or someone else) have requested the reset of the password for your account on To Do.\n\n" +
             "Please click on the following link, or paste this into your browser to complete the process:\n\n" +
-            "http://localhost:4200/user/new-password/" +
+            `${process.env.APP_URL}/user/new-password/` +
             passwordReset.resettoken +
             "\n\n" +
             "If you did not request this, please ignore this email and your password will remain unchanged.\n",
         };
         transporter.sendMail(mailOptions, (err, info) => {
           if (err) {
-            return res.status(500).send({ error: err.message });
+            return res.status(500).send({ error: err });
           } else {
             console.log("Email sent: " + info.response);
             res.status(200).json({
@@ -141,14 +141,14 @@ router.post("/password-reset-request", (req, res, next) => {
         });
       })
       .catch((err) => {
-        return res.status(500).send({ error: err.message });
+        return res.status(500).send({ error: err });
       });
   });
 });
 
 router.post("/valid-password-reset-token", (req, res, next) => {
   if (!req.body.resettoken) {
-    return res.status(500).json({ message: "Token is required" });
+    return res.status(400).json({ message: "Token is required" });
   }
 
   PasswordReset.findOne({ resettoken: req.body.resettoken })
@@ -163,7 +163,7 @@ router.post("/valid-password-reset-token", (req, res, next) => {
       res.status(200).json({ validToken: true });
     })
     .catch((error) => {
-      return res.status(500).send({ msg: error.message });
+      return res.status(500).send({ msg: error });
     });
 });
 
@@ -174,13 +174,13 @@ router.post("/reset-password", (req, res, next) => {
     !req.body.confirmedPassword
   ) {
     return res
-      .status(500)
+      .status(400)
       .json({ message: "Some parameters are missing in the request body" });
   }
 
   if (req.body.newPassword !== req.body.confirmedPassword) {
     return res
-      .status(500)
+      .status(400)
       .json({ message: "Passwords entered is not identical. Try again" });
   }
 
@@ -191,7 +191,7 @@ router.post("/reset-password", (req, res, next) => {
     .then((resetRequest) => {
       if (!resetRequest) {
         return res
-          .status(409)
+          .status(500)
           .json({ message: "Password reset token has expired" });
       }
       passwordResetToken = resetRequest;
@@ -200,7 +200,7 @@ router.post("/reset-password", (req, res, next) => {
     .then((matchingUser) => {
       if (!matchingUser) {
         return res
-          .status(409)
+          .status(404)
           .json({ message: "Account with this email does not exist" });
       }
       userForPasswordReset = matchingUser;
@@ -215,7 +215,7 @@ router.post("/reset-password", (req, res, next) => {
       return res.status(201).json({ resetSuccess: true });
     })
     .catch((error) => {
-      return res.status(500).send({ message: error.message });
+      return res.status(500).send({ message: error });
     });
 });
 

@@ -6,9 +6,11 @@ const userRoutes = require("./backend/routes/user");
 const taskRoutes = require("./backend/routes/task");
 const listRoutes = require("./backend/routes/list");
 const friendsRoutes = require("./backend/routes/friends");
-
+const swaggerUi = require("swagger-ui-express");
 const cors = require("cors");
 const passport = require("passport");
+
+swaggerDocument = require("./swagger.json");
 
 mongoose.set("useCreateIndex", true);
 mongoose.set("useNewUrlParser", true);
@@ -50,6 +52,8 @@ app.options("*", cors());
 require("./backend/authentication/jwt");
 app.use(passport.initialize());
 
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+
 app.use("/api/user", userRoutes);
 app.use(
   "/api/task",
@@ -66,5 +70,11 @@ app.use(
   passport.authenticate("jwt", { session: false }),
   friendsRoutes
 );
+
+app.use("/", (req, res, next) => {
+  res.send(
+    `Success !!. You have reached the right place. You can discover all the routes <a href="${process.env.BE_URL}/api-docs"> here </a> `
+  );
+});
 
 module.exports = app;

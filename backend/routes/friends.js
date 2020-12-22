@@ -78,7 +78,7 @@ router.get("/discover", (req, res, next) => {
 router.post("/send-request", (req, res, next) => {
   if (!req.body.requestedId) {
     return res
-      .status(500)
+      .status(400)
       .json({ message: "Some parameters are missing in the request body" });
   }
 
@@ -109,7 +109,7 @@ router.post("/send-request", (req, res, next) => {
 router.post("/accept-request", (req, res, next) => {
   if (!req.body.requestedId) {
     return res
-      .status(500)
+      .status(400)
       .json({ message: "Some parameters are missing in the request body" });
   }
 
@@ -148,7 +148,7 @@ router.post("/accept-request", (req, res, next) => {
 router.post("/reject-request", (req, res, next) => {
   if (!req.body.requestedId) {
     return res
-      .status(500)
+      .status(400)
       .json({ message: "Some parameters are missing in the request body" });
   }
 
@@ -181,7 +181,7 @@ router.post("/reject-request", (req, res, next) => {
 router.post("/remove-friend", (req, res, next) => {
   if (!req.body.requestedId) {
     return res
-      .status(500)
+      .status(400)
       .json({ message: "Some parameters are missing in the request body" });
   }
 
